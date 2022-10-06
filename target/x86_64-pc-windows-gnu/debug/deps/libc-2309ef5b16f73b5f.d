@@ -1,0 +1,12 @@
+/home/aclydes/dev/SynthVst/target/x86_64-pc-windows-gnu/debug/deps/libc-2309ef5b16f73b5f.rmeta: /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/lib.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/macros.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/fixed_width_ints.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/mod.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/mod.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/align.rs
+
+/home/aclydes/dev/SynthVst/target/x86_64-pc-windows-gnu/debug/deps/liblibc-2309ef5b16f73b5f.rlib: /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/lib.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/macros.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/fixed_width_ints.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/mod.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/mod.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/align.rs
+
+/home/aclydes/dev/SynthVst/target/x86_64-pc-windows-gnu/debug/deps/libc-2309ef5b16f73b5f.d: /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/lib.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/macros.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/fixed_width_ints.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/mod.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/mod.rs /home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/align.rs
+
+/home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/lib.rs:
+/home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/macros.rs:
+/home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/fixed_width_ints.rs:
+/home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/mod.rs:
+/home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/mod.rs:
+/home/aclydes/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.134/src/windows/gnu/align.rs:
