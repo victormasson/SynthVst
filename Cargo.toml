@@ -12,3 +12,4 @@ crate-type = ["cdylib"]
 # add some dependencies here
 vst = "0.3"
 rand = "0.8"
+fundsp = "0.3.1"
