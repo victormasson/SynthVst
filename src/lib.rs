@@ -1,12 +1,30 @@
+use fundsp::hacker::*;
 use rand::Rng;
 use std::borrow::BorrowMut;
+use vst::buffer::AudioBuffer;
 use vst::prelude::*;
 
-struct SynthVst;
+mod basic_signal;
+mod rand_generator;
+
+pub struct SynthVst {
+    audio: Box<dyn AudioUnit64 + Send>,
+    play_mode: PlayMode,
+}
+
+enum PlayMode {
+    Random,
+    Basic,
+    Other,
+}
 
 impl Plugin for SynthVst {
     fn new(host: HostCallback) -> Self {
-        SynthVst
+        let audio_graph = sine_hz(440.0) >> split::<U2>();
+        Self {
+            audio: Box::new(audio_graph) as Box<dyn AudioUnit64 + Send>,
+            play_mode: PlayMode::Basic,
+        }
     }
 
     // Plugin info
@@ -25,9 +43,10 @@ impl Plugin for SynthVst {
 
     // Modify audio buffer
     fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
-        let (_, mut outputs) = buffer.split();
-        for output in outputs.borrow_mut() {
-            rand::thread_rng().fill(output);
+        match self.play_mode {
+            PlayMode::Random => rand_generator::play(buffer),
+            PlayMode::Basic => basic_signal::play(self, buffer),
+            _ => todo!(),
         }
     }
 }
