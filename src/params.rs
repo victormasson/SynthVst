@@ -72,7 +72,7 @@ impl Display for Parameter {
             match self {
                 Parameter::Modulation => "Modulation",
                 Parameter::Pan => "Pan",
-                Parameter::Dirty => "Dirty",
+                _ => "Dirty",
             }
         )
     }
