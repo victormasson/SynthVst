@@ -114,7 +114,6 @@ impl Plugin for SynthVst {
                     }
                 }
             }
-            //event.
         }
     }
 }
