@@ -14,6 +14,15 @@ pub enum Parameter {
     Modulation = 1,
 }
 
+impl Parameter {
+    pub fn count() -> usize {
+        [Parameter::Freq, Parameter::Modulation]
+            .to_vec()
+            .iter()
+            .count()
+    }
+}
+
 impl Default for Parameters {
     fn default() -> Self {
         Self {

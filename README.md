@@ -5,3 +5,10 @@
 ## build
 
 ```cargo build --target=x86_64-pc-windows-gnu --release```
+
+## Install compilation on windows
+
+```sh
+cargo install xwin
+sudo apt-get install mingw-w64
+```

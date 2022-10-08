@@ -4,6 +4,8 @@ use vst::buffer::AudioBuffer;
 use vst::prelude::*;
 
 use crate::params::{Parameter, Parameters};
+use crate::tag::Tag;
+use crate::Tag;
 use crate::{SynthVst, FREQ_SCALAR};
 
 pub fn play(synth_vst: &mut SynthVst, buffer: &mut AudioBuffer<f32>) {
@@ -24,7 +26,7 @@ pub fn play(synth_vst: &mut SynthVst, buffer: &mut AudioBuffer<f32>) {
 
         synth_vst.audio.set(
             Parameter::Freq as i64,
-            synth_vst.parameters.get_parameter(Parameter::Freq as i32) as f64 * FREQ_SCALAR,
+            synth_vst.note.map(|(n, ..)| n.to_freq_f64()).unwrap_or(0.),
         );
         synth_vst.audio.set(
             Parameter::Modulation as i64,
@@ -32,6 +34,8 @@ pub fn play(synth_vst: &mut SynthVst, buffer: &mut AudioBuffer<f32>) {
                 .parameters
                 .get_parameter(Parameter::Modulation as i32) as f64,
         );
+
+        synth_vst.set_tag_with_param(Tag::Modulation, Parameter::Modulation);
 
         synth_vst.audio.process(
             MAX_BUFFER_SIZE,
