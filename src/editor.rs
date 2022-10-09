@@ -4,10 +4,10 @@ use crate::{
     params::{Parameter, Parameters},
     PluginEditor, VstParent,
 };
-use baseview::*;
+use baseview::{Size, WindowOpenOptions, WindowScalePolicy};
 use egui::*;
-use egui_baseview::*;
-use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
+use egui_baseview::{EguiWindow, Queue};
+use raw_window_handle::{HasRawWindowHandle, RawWindowHandle, Win32WindowHandle};
 use vst::{editor::Editor, plugin::PluginParameters};
 
 const WINDOW_WIDTH: usize = 512;
@@ -31,13 +31,10 @@ impl Editor for PluginEditor {
                 // 4. Setting up `egui` for use //
                 // ---------------------------- //
                 self.is_open = true;
-                let settings = Settings {
-                    window: WindowOpenOptions {
-                        title: String::from("SynthVst"),
-                        size: Size::new(WINDOW_WIDTH as f64, WINDOW_HEIGHT as f64),
-                        scale: WindowScalePolicy::SystemScaleFactor,
-                    },
-                    render_settings: RenderSettings::default(),
+                let settings = WindowOpenOptions {
+                    title: String::from("SynthVst"),
+                    size: Size::new(WINDOW_WIDTH as f64, WINDOW_HEIGHT as f64),
+                    scale: WindowScalePolicy::SystemScaleFactor,
                 };
 
                 let window_handle = EguiWindow::open_parented(
@@ -45,7 +42,7 @@ impl Editor for PluginEditor {
                     settings,
                     self.params.clone(),
                     |_egui_ctx, _queue, _state| {},
-                    |egui_ctx: &CtxRef, _, state: &mut Arc<Parameters>| {
+                    |egui_ctx: &Context, _, state: &mut Arc<Parameters>| {
                         draw_ui(egui_ctx, state);
                     },
                 );
@@ -99,11 +96,11 @@ impl Editor for PluginEditor {
 
 unsafe impl Send for VstParent {}
 
-pub struct WindowParent(pub WindowHandle);
+pub struct WindowParent(pub Win32WindowHandle);
 unsafe impl Send for WindowParent {}
 
 #[inline(always)]
-fn draw_ui(ctx: &CtxRef, state: &mut Arc<Parameters>) -> egui::Response {
+fn draw_ui(ctx: &Context, state: &mut Arc<Parameters>) -> egui::Response {
     egui::CentralPanel::default()
         .show(ctx, |ui| {
             ui.vertical(|ui| {

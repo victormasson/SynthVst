@@ -9,15 +9,18 @@ use fundsp::hacker::*;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use params::{Parameter, Parameters};
-use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
+use raw_window_handle::{
+    HasRawWindowHandle, RawWindowHandle, Win32WindowHandle, WindowsDisplayHandle,
+};
 use std::collections::{HashMap, VecDeque};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{convert::TryFrom, sync::Arc, time::Duration};
 use vst::buffer::AudioBuffer;
 use vst::editor::Editor;
 use vst::plugin::{Category, HostCallback, Info, Plugin, PluginParameters};
+use vst::prelude::*;
 use vst::util::AtomicFloat;
-use wmidi::Note;
+use wmidi::{Channel, Note, Velocity};
 
 pub struct PluginEditor {
     params: Arc<Parameters>,
@@ -25,6 +28,7 @@ pub struct PluginEditor {
     is_open: bool,
 }
 
+#[derive(Default)]
 struct SynthVst {
     audio: Box<dyn AudioUnit64 + Send>,
     sample_rate: f32,
@@ -36,10 +40,9 @@ struct SynthVst {
     editor: Option<PluginEditor>,
 }
 
-type Velocity = u8;
-
-impl Default for SynthVst {
-    fn default() -> Self {
+impl Plugin for SynthVst {
+    #[allow(clippy::precedence)]
+    fn new(_host: HostCallback) -> Self {
         let Parameters {
             modulation,
             dirty,
@@ -62,7 +65,7 @@ impl Default for SynthVst {
             audio: Box::new(audio_graph) as Box<dyn AudioUnit64 + Send>,
             parameters: Default::default(),
             note: None,
-            time: Duration::default(),
+            time: Duration::from_millis(500),
             sample_rate: 41_000f32,
             enabled: false,
             graph: Box::new(c),
@@ -73,16 +76,10 @@ impl Default for SynthVst {
             }),
         }
     }
-}
-
-impl Plugin for SynthVst {
-    fn new(_host: HostCallback) -> Self {
-        Self::default()
-    }
 
     fn get_info(&self) -> Info {
         Info {
-            name: "synthy".into(),
+            name: "SynthVst".into(),
             vendor: "rusty".into(),
             version: 1,
             unique_id: 128956,
@@ -184,7 +181,7 @@ impl Plugin for SynthVst {
                     match midi {
                         wmidi::MidiMessage::NoteOn(_channel, note, _velocity) => {
                             self.set_tag(Tag::NoteOn, self.time.as_secs_f64());
-                            self.note = Some((note, 100));
+                            self.note = Some((note, _velocity));
                             self.enabled = true;
                         }
                         wmidi::MidiMessage::NoteOff(_channel, note, _velocity) => {
@@ -258,11 +255,11 @@ unsafe impl HasRawWindowHandle for VstParent {
 #[cfg(target_os = "windows")]
 unsafe impl HasRawWindowHandle for VstParent {
     fn raw_window_handle(&self) -> RawWindowHandle {
-        use raw_window_handle::windows::WindowsHandle;
+        use raw_window_handle::Win32WindowHandle;
 
-        RawWindowHandle::Windows(WindowsHandle {
+        RawWindowHandle::Win32(Win32WindowHandle {
             hwnd: self.0,
-            ..WindowsHandle::empty()
+            ..Win32WindowHandle::empty()
         })
     }
 }
