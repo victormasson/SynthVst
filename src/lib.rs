@@ -6,6 +6,7 @@ extern crate vst;
 
 use baseview::WindowHandle;
 use fundsp::hacker::*;
+use log::info;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use params::{Parameter, Parameters};
@@ -41,7 +42,6 @@ struct SynthVst {
 }
 
 impl Plugin for SynthVst {
-    #[allow(clippy::precedence)]
     fn new(_host: HostCallback) -> Self {
         let Parameters {
             modulation,
@@ -70,9 +70,9 @@ impl Plugin for SynthVst {
             enabled: false,
             graph: Box::new(c),
             editor: Some(PluginEditor {
-                params,
                 window_handle: None,
                 is_open: false,
+                params: params.clone(),
             }),
         }
     }
@@ -112,21 +112,37 @@ impl Plugin for SynthVst {
         log::info!("init");
     }
 
-    fn get_editor(&mut self) -> Option<Box<dyn Editor>> {
-        if let Some(editor) = self.editor.take() {
-            Some(Box::new(editor) as Box<dyn Editor>)
-        } else {
-            None
-        }
-    }
-
     fn set_sample_rate(&mut self, rate: f32) {
         self.sample_rate = rate;
         self.time = Duration::default();
         self.audio.reset(Some(rate as f64));
     }
 
-    // Here is where the bulk of our audio processing code goes.
+    fn set_block_size(&mut self, size: i64) {}
+
+    fn resume(&mut self) {}
+
+    fn suspend(&mut self) {}
+
+    fn vendor_specific(
+        &mut self,
+        index: i32,
+        value: isize,
+        ptr: *mut std::os::raw::c_void,
+        opt: f32,
+    ) -> isize {
+        0
+    }
+
+    fn can_do(&self, can_do: CanDo) -> Supported {
+        info!("Host is asking if plugin can: {:?}.", can_do);
+        Supported::Maybe
+    }
+
+    fn get_tail_size(&self) -> isize {
+        0
+    }
+
     fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
         let (_inputs, mut outputs) = buffer.split();
         if outputs.len() == 2 {
@@ -168,12 +184,6 @@ impl Plugin for SynthVst {
         }
     }
 
-    // Return the parameter object. This method can be omitted if the
-    // plugin has no parameters.
-    fn get_parameter_object(&mut self) -> Arc<dyn PluginParameters> {
-        Arc::clone(&self.parameters) as Arc<dyn PluginParameters>
-    }
-
     fn process_events(&mut self, events: &vst::api::Events) {
         for event in events.events() {
             if let vst::event::Event::Midi(midi) = event {
@@ -198,9 +208,41 @@ impl Plugin for SynthVst {
         }
     }
 
+    fn get_parameter_object(&mut self) -> Arc<dyn PluginParameters> {
+        Arc::clone(&self.parameters) as Arc<dyn PluginParameters>
+    }
+
+    fn get_input_info(&self, input: i32) -> vst::channels::ChannelInfo {
+        vst::channels::ChannelInfo::new(
+            format!("Input channel {}", input),
+            Some(format!("In {}", input)),
+            true,
+            None,
+        )
+    }
+
+    fn get_output_info(&self, output: i32) -> vst::channels::ChannelInfo {
+        vst::channels::ChannelInfo::new(
+            format!("Output channel {}", output),
+            Some(format!("Out {}", output)),
+            true,
+            None,
+        )
+    }
+
     fn start_process(&mut self) {
         if self.parameters.dirty.swap(false, Ordering::Relaxed) {
             self.update_audio_graph();
+        }
+    }
+
+    fn stop_process(&mut self) {}
+
+    fn get_editor(&mut self) -> Option<Box<dyn Editor>> {
+        if let Some(editor) = self.editor.take() {
+            Some(Box::new(editor) as Box<dyn Editor>)
+        } else {
+            None
         }
     }
 }
